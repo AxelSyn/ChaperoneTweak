@@ -210,6 +210,71 @@ public class ChaperoneElements : MonoBehaviour
         TweakAction = TweakActionType.none;
     }
 
+	private ChaperonePlaneProperties MatchLastWall = null;
+	public ChaperonePlaneProperties MatchQuickCreate(Vector3 v0, Vector3 v1) {
+		ChaperonePlaneProperties wall = CreatePlane("ChapWall", true, WallMaterial);
+		wall.transform.parent = transform;
+		wall.transform.localScale = new Vector3(Vector3.Distance(v0, v1), 2.5f, 1);
+		wall.transform.localRotation = Quaternion.LookRotation(v1 - v0, Vector3.up) * Quaternion.Euler(0, 90, 0);
+		wall.transform.localPosition = Vector3.Lerp (v0, v1, 0.5f); //+ new Vector3(0, 2.5f/2, 0);
+
+		if (MatchLastWall != null) {
+			MatchLastWall.LeftWall = wall;
+			wall.RightWall = MatchLastWall;
+		}
+		MatchLastWall = wall;
+
+		return wall;
+	}
+
+	public ChaperonePlaneProperties MatchQuickCreate(Vector3 v0, Vector3 v1, ChaperonePlaneProperties vWall) {
+		ChaperonePlaneProperties wall = CreatePlane("ChapWall", true, WallMaterial);
+		wall.transform.parent = transform;
+		wall.transform.localScale = new Vector3(Vector3.Distance(v0, v1), 2.5f, 1);
+		wall.transform.localRotation = Quaternion.LookRotation(v1 - v0, Vector3.up) * Quaternion.Euler(0, 90, 0);
+		wall.transform.localPosition = Vector3.Lerp (v0, v1, 0.5f); //+ new Vector3(0, 2.5f/2, 0);
+
+		if (MatchLastWall != null) {
+			MatchLastWall.LeftWall = wall;
+			wall.RightWall = MatchLastWall;
+		}
+		MatchLastWall = wall;
+		vWall.RightWall = wall;
+
+		return wall;
+	}
+
+	public void MatchPlayspace()
+	{
+		if (PlaySpace == null)
+			return;
+		
+		if (FirstWall != null)
+		{
+			ChaperonePlaneProperties wall = FirstWall;
+			for (int i = 0; i < WallCount; i++)
+			{
+				ChaperonePlaneProperties prevwall = wall.RightWall;
+				Destroy(wall.gameObject);
+				wall = prevwall;
+
+			}
+			FirstWall = null;
+			WallCount = 0;
+		}
+
+		Vector3 v0 = PlaySpace.transform.localRotation * new Vector3 (PlaySpace.transform.localScale.x / 2, 0, PlaySpace.transform.localScale.z / 2) + PlaySpace.transform.localPosition;
+		Vector3 v1 = PlaySpace.transform.localRotation * new Vector3 (-PlaySpace.transform.localScale.x / 2, 0, PlaySpace.transform.localScale.z / 2) + PlaySpace.transform.localPosition;
+		Vector3 v2 = PlaySpace.transform.localRotation * new Vector3 (-PlaySpace.transform.localScale.x / 2, 0, -PlaySpace.transform.localScale.z / 2) + PlaySpace.transform.localPosition;
+		Vector3 v3 = PlaySpace.transform.localRotation * new Vector3 (PlaySpace.transform.localScale.x / 2, 0, -PlaySpace.transform.localScale.z / 2) + PlaySpace.transform.localPosition;
+
+		FirstWall = MatchQuickCreate (v0, v1);
+		MatchQuickCreate (v1, v2);
+		MatchQuickCreate (v2, v3);
+		MatchQuickCreate (v3, v0, FirstWall);
+		WallCount = 4;
+	}
+
     public void SaveChaperone()
     {
         TweakAction = TweakActionType.save;

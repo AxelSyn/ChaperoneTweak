@@ -278,6 +278,10 @@ public class ControllerInput : MonoBehaviour
                     {
                         ChapElements.SaveChaperone();
                     }
+					else if (collisions[0].name == "WallMatch")
+					{
+						ChapElements.MatchPlayspace ();
+					}
                 }
 
 
