@@ -1,5 +1,5 @@
 # ChaperoneTweak
-A version of ChaperoneTweak that adds a new button to align the Chaperone to the play space.
+A version of ChaperoneTweak that adds a new button to align the Chaperone walls to the play space.
 
 [Download Modified Version Here](https://github.com/Archcookie/ChaperoneTweak/releases/)
 
